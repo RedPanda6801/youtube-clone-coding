@@ -1,0 +1,290 @@
+url /api/v1/
+
+[auth]
+
+회원 가입(/api/v1/auth/register)
+register (post)
+{
+    "channelName" : "testBG",
+    "email" : "bgbg092@gmail.com",
+    "password" : ""
+}
+
+email은 email 형식에 맞을 것
+password 6글자 이상
+
+로그인(/api/v1/auth/login)
+login (post)
+{
+    "email" : "bgbg092@gmail.com",
+    "password" : ""
+}
+
+성공 시, JWT 반환
+
+이하부터는 bearer token 필요 
+
+로그아웃(/api/v1/auth/logout)
+logout(post)
+{}
+
+개인 정보 조회(/api/v1/auth/me)
+me (post)
+{}
+
+
+개인 정보 수정(/api/v1/auth/updatedetails)
+updatedetails (put)
+{
+    "channelName" : "updateChannelName",
+    "email" : "bg092@dklab.kr"
+}
+
+
+아바타 수정(/api/v1/auth/avatar)
+avatar(put)
+
+*[form-data]
+avatar : (file)
+
+
+비밀번호 수정(api/v1/auth/updatepassword)
+updatepassword(put)
+{
+    "currentPassword" : "",
+    "newPassword" : ""
+}
+
+
+비밀번호 찾기, 비밀번호 초기화
+forgotPassword , Reset password
+생략
+
+
+
+
+[categories] admin만 가능
+
+카테고리 목록 조회(/api/v1/categories)
+get categories(get)
+{}
+
+카테고리 단일 조회(/api/v1/categories/:categoryId)
+{}
+
+카테고리 추가(/api/v1/categories)
+create category(post)
+{
+    "title" : "testTitle",
+    "description" : "testDescription"
+}
+
+title, description최소 3글자 이상씩
+
+카테고리 수정(/api/v1/categories/:categoryId)
+update category(put)
+{
+    "title" : "updateTitle",
+    "description" : "updateDescription"
+}
+
+카테고리 삭제(/api/v1/categories/:categoryId)
+delete cateogory(delete)
+{}
+
+
+
+[videos]
+
+비디오 목록 조회(/api/v1/videos/private, /api/v1/videos/public)
+get videos (get)
+{}
+
+
+비디오 단일 조회(/api/v1/videos/:videoId)
+get video (get)
+{}
+
+
+비디오 업로드(/api/v1/videos)
+create video (post)
+
+*[form-data]
+"title" : ""
+"description" : ""
+"categoryId" : ""
+"userId" : ""
+"video" : (file)
+
+
+비디오 수정(/api/v1/videos/:videoId)
+update video (put)
+
+*[form-data]
+"title" : ""
+"description" : ""
+"categoryId" : ""
+"video" : (file)
+
+
+비디오 view 증가(/api/v1/videos/:videoId/views)
+update video views (put)
+{}
+
+
+비디오 섬네일 수정(/api/v1/videos/:videoId/thumbnails)
+update video thumbnail (put)
+
+*[form-data]
+"thumbnail" : (file)
+
+비디오 삭제(/api/v1/videos/:videoId)
+delete video (delete)
+{}
+
+
+[feelings]
+
+기분 추가(/api/v1/feelings)
+create feeling (post)
+{
+    "type" : "like",
+    "videoId" : "6327576852301381e028d5cf",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+
+기분 확인(/api/v1/feelings/check)
+check feeling (post)
+{
+    "videoId" : "6327576852301381e028d5cf",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+
+내 기분들 확인(/api/v1/feelings/videos)
+get liked videos (get)
+{}
+
+
+[comments]
+
+비디오 댓글 조회(/api/v1/comments/:videoId/videos)
+get video comments (get)
+{}
+
+
+댓글 추가(/api/v1/comments)
+create comment (post)
+{
+    "text" : "testText",
+    "videoId" : "6327576852301381e028d5cf",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+
+댓글 수정(/api/v1/comments/:commentId)
+update comment (put)
+{
+    "text" : "updateText"
+}
+
+
+댓글 삭제(/api/v1/comments/:commentId)
+delete comment (delete)
+{}
+
+
+[replies]
+
+대댓글 조회(/api/v1/replies)
+get replies (get)
+{}
+
+
+대댓글 추가(/api/v1/replies)
+create reply (post)
+{
+    "text" : "testReplyText",
+    "commentId" : "6327604c52301381e028d607",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+
+대댓글 수정(/api/v1/replies/:repliesId)
+update reply (put)
+{
+    "text" : "updateReplyText"
+}
+
+
+대댓글 삭제(/api/v1/replies/:repliesId)
+delete reply (delete)
+{}
+
+
+[subscriptions]
+
+내 구독자들 조회(/api/v1/subscriptions/subscribers)
+get subscribed (get)
+{}
+
+
+채널들 구독 조회(/api/v1/subscriptions/channels)
+get channels subscribed (get)
+{}
+
+
+구독 확인(/api/v1/subscriptions/check)
+check subscription (post)
+{
+    "subscriberId" : "632765de52301381e028d627",
+    "channelId" : "6327380242a1047d7c562ae4"
+}
+
+
+구독 추가(/api/v1/subscriptions)
+create subscription (post)
+{
+    "subscriberId" : "632765de52301381e028d627",
+    "channelId" : "6327380242a1047d7c562ae4"
+}
+
+
+구독채널 비디오 조회(/api/v1/subscriptions/videos)
+Get subscribed videos (get)
+{}
+
+
+[histories]
+
+기록 조회(/api/v1/histories)
+get histories (get)
+{}
+
+
+기록 추가(/api/v1/histories)
+create history (post)
+//검색
+{
+    "type" : "search",
+    "searchText" : "searchText1",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+//시청
+{
+    "type" : "watch",
+    "videoId" : "6323ee3c2f8a7e7d56be087d",
+    "userId" : "6327380242a1047d7c562ae4"
+}
+
+
+기록 삭제(/api/v1/histories/:hisotoryId)
+delete history (delete)
+{}
+
+
+기록들 삭제(/api/v1/histories/search/all, /api/v1/histories/watch/all)
+delete histories (delete)
+{}
