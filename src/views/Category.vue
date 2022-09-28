@@ -1,74 +1,86 @@
 <template>
-  <div id="categoryDiv">
-    <v-card class="categoryList" max-width="300" max-height="650" height="97%">
-      <v-list dense>
-        <v-subheader class="categoryTitle">카테고리 분류</v-subheader>
-        <v-list-item-group
-          v-model="selectedItem"
-          color="primary"
-          @change="getItem"
-        >
-          <v-list-item v-for="(title, index) in pagingCheck" :key="index">
-            <!-- <v-list-item-icon>
+  <div id="categoryDiv" class="grey lighten-5">
+    <div class="categoryList">
+      <v-card class="cardStyle" min-width="250" min-height="650">
+        <v-list dense>
+          <v-subheader class="categoryTitle">카테고리</v-subheader>
+          <v-list-item-group
+            v-model="selectedItem"
+            color="gray"
+            @change="getItem"
+          >
+            <v-list-item v-for="(title, index) in pagingCheck" :key="index">
+              <!-- <v-list-item-icon>
               <v-icon v-text="title"></v-icon>
             </v-list-item-icon> -->
-            <v-list-item-content>
-              <v-list-item-title v-text="title"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-        <v-pagination
-          id="pageStyle"
-          v-model="page"
-          class="my-4"
-          :length="pageLength"
-        ></v-pagination>
-      </v-list>
-      <v-btn id="addBtn" class="btnStyle" @click="showAddDiv">✚</v-btn>
-    </v-card>
-    <div></div>
-    <div class="updateDiv">
+              <v-list-item-content>
+                <v-list-item-title v-text="title"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+        <div class="cardBottomStyle">
+          <v-pagination
+            id="pageStyle"
+            v-model="page"
+            class="pageStyle"
+            :length="pageLength"
+          ></v-pagination>
+          <v-btn id="addBtn" class="btnStyle" @click="showAddDiv">✚</v-btn>
+        </div>
+      </v-card>
+    </div>
+    <v-card class="infoStyle">
       <div class="showInfoDiv">
-        <h1>카테고리 정보</h1>
-        <h3>카테고리 이름 : {{ selectedCategory.title }}</h3>
-        <h5>카테고리 설명 : {{ selectedCategory.description }}</h5>
+        <h2>카테고리 정보</h2>
+        <div class="descriptionStyle">
+          <h4 style="background-color: white">
+            ⌲ {{ selectedCategory.title }}
+          </h4>
+          <h5 style="background-color: white; height: 80px">
+            ✎ {{ selectedCategory.description }}
+          </h5>
+        </div>
       </div>
       <form
         v-if="showUpdateDiv"
-        id="updateForm"
-        class="formStyle"
+        id="formStyle"
+        class="updateStyle"
         @submit.prevent="updateItem"
       >
-        <h1>카테고리 수정</h1>
+        <h2>카테고리 수정</h2>
         <v-text-field
+          class="inputStyle"
           v-model="updateForm.title"
-          placeholder="title"
+          placeholder="최소 세글자를 입력해주세요"
         ></v-text-field>
         <v-textarea
-          class="textStyle"
+          class="inputStyle"
           v-model="updateForm.description"
-          placeholder="description"
+          placeholder="최소 세글자를 입력해주세요"
         ></v-textarea>
         <div class="btnDiv">
           <v-btn type="submit">수정</v-btn>
-          <div></div>
           <v-btn @click="deleteItem" disabled>삭제</v-btn>
         </div>
       </form>
-      <form v-else id="addForm" class="formStyle" @submit.prevent="addItem">
-        <h1>카테고리 추가</h1>
+      <form v-else id="addForm" class="addStyle" @submit.prevent="addItem">
+        <h2>카테고리 추가</h2>
         <v-text-field
+          class="inputStyle"
           v-model="updateForm.title"
-          placeholder="title"
+          placeholder="최소 세글자를 입력해주세요"
         ></v-text-field>
         <v-textarea
-          class="textStyle"
+          class="inputStyle"
           v-model="updateForm.description"
-          placeholder="description"
+          placeholder="최소 세글자를 입력해주세요"
         ></v-textarea>
-        <v-btn type="submit">추가</v-btn>
+        <div class="btnDiv">
+          <v-btn type="submit">추가</v-btn>
+        </div>
       </form>
-    </div>
+    </v-card>
   </div>
 </template>
 <script>
@@ -91,14 +103,15 @@ export default {
   }),
   computed: {
     pagingCheck() {
+      console.log("현재 페이지", this.page);
       const arr = [];
       this.categoryTitles.map((title, index) => {
-        if (Math.ceil(index / 12) == this.page || index / 12 === 0) {
-          console.log(this.page);
+        if (Math.floor(index / 12) + 1 == this.page) {
+          console.log("13개까지만 보여줄게요 : ", title);
           arr.push(title);
         }
       });
-      console.log(this.categories.length);
+
       return arr;
     },
     pageLength() {
@@ -162,7 +175,7 @@ export default {
           )
           .then((response) => {
             console.log("수정 성공 : ", response);
-            this.$router.go(0);
+            this.getCategories();
           })
           .catch((error) => {
             console.log(error);
@@ -184,7 +197,7 @@ export default {
             })
             .then((response) => {
               console.log("삭제 성공 : ", response);
-              this.$router.go(0);
+              this.getCategories();
             })
             .catch((error) => {
               console.log(error);
@@ -211,7 +224,7 @@ export default {
               title: "",
               description: "",
             };
-            this.$router.go(0);
+            this.getCategories();
           })
           .catch((error) => {
             console.log("추가 실패 : ", error);
@@ -230,49 +243,54 @@ export default {
 </script>
 <style>
 #categoryDiv {
+  margin: 3% 1% 1% 1%;
   display: grid;
-  grid-template-columns: 25% 1% 72%;
-  border-radius: 5px;
-  height: 650px;
-  background-color: lightgray;
-}
-.categoryList {
-  display: grid;
-  grid-template-rows: calc(100% - 35px) 35px;
-  height: 650px;
-  margin: 5px;
+  grid-template-columns: 25% 65%;
+  grid-gap: 5%;
 }
 .categoryTitle {
-  background-color: rgb(239, 237, 237);
+  background-color: aliceblue;
 }
-.updateDiv {
-  align-items: center;
-  justify-content: center;
-  margin: 5px 0px 5px 0px;
-  border-radius: 10px;
+.cardStyle {
+  display: grid;
+  grid-gap: 3%;
+  grid-template-rows: calc(100% - 100px) 80px;
+}
+.infoStyle {
+  display: grid;
+  grid-gap: 3%;
+  grid-template-rows: 30% 65%;
   background-color: white;
-  height: 97%;
   padding: 3%;
 }
-.formStyle {
-  border-radius: 5px;
-  border: 1px solid rgb(124, 119, 119);
-  padding: 5%;
+.showInfoDiv {
+  padding: 2%;
+  background-color: rgb(246, 247, 247);
+}
+.descriptionStyle {
+  display: grid;
+  grid-gap: 10%;
+}
+.updateStyle {
+  padding: 2%;
+  background-color: rgb(246, 247, 247);
+}
+.addStyle {
+  padding: 2%;
+  background-color: rgb(246, 247, 247);
+}
+.inputStyle {
+  font-size: 18px;
+  background-color: white;
+  padding: 2% 3% 0% 3%;
 }
 .btnStyle {
-  bottom: 0;
+  width: 100%;
 }
 .btnDiv {
+  padding: 5% 2% 1% 2%;
   display: grid;
-  grid-template-columns: 20% 60% 20%;
-}
-.textStyle {
-  margin-bottom: 20px;
-  border-radius: 5px;
-  padding: 10px;
-  border: 1px solid #000;
-}
-.pageStyle {
-  width: 10px;
+  grid-template-columns: 20% 20%;
+  grid-gap: 60%;
 }
 </style>

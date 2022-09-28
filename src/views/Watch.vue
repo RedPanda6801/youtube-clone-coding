@@ -1,106 +1,108 @@
 <template>
   <v-container id="Watch" class="fill-height" fluid>
     <div class="watchSection fill-height">
-      <div class="watchContainer">
-        <v-skeleton-loader large tile :loading="videoLoading">
-          <v-responsive>
-            <video
-              controls
-              style="
-                height: 600px;
-                width: 100%;
-                background-color: black;
-                border-radius: 5px;
-              "
-              @play="addVideoView"
-            >
-              <source :src="videoUrl !== null && videoUrl" type="video/mp4" />
-            </video>
-          </v-responsive>
-        </v-skeleton-loader>
+      <v-skeleton-loader large tile :loading="videoLoading">
+        <v-responsive>
+          <video
+            controls
+            style="
+              height: 600px;
+              width: 100%;
+              background-color: black;
+              border-radius: 5px;
+            "
+            @play="addVideoView"
+          >
+            <source :src="videoUrl !== null && videoUrl" type="video/mp4" />
+          </video>
+        </v-responsive>
+      </v-skeleton-loader>
 
-        <div class="videoDiv">
-          <div class="videoInfoStyle">
+      <v-card class="videoDiv">
+        <div class="videoInfoStyle">
+          <div>
             <div>
               <h2 class="videoTitle">{{ watchVideo.title }}</h2>
               <h4>조회수 : {{ watchVideo.views }} 회</h4>
-              <h5>{{ watchVideo.description }}</h5>
-            </div>
-            <div class="likeBtnStyle">
-              <v-btn v-on:click="addFeeling($event)">Like</v-btn>
-              <div></div>
-              <v-btn v-on:click="addFeeling($event)">Dislike</v-btn>
-            </div>
-          </div>
-          <div class="videoLikeStyle">
-            <h4>좋아요 {{ countVideoLike }}</h4>
-            <h4>싫어요 {{ countVideoDislike }}</h4>
-          </div>
-          <div class="commentDiv">
-            <h3>댓글 보기 {{ `(${countComment})` }}</h3>
-            <div v-for="(comment, index) in comments" :key="index">
-              <div class="commentStyle">
-                <h4>{{ comment.userId.channelName }} :</h4>
-                <div>{{ comment.text }}</div>
-                <v-btn class="btnStyle" @click="loadTextField(index)">✏️</v-btn>
-                <div></div>
-                <v-btn class="btnStyle" @click="deleteComment(comment)"
-                  >🗑️</v-btn
-                >
-                <div
-                  @click="showReply(index)"
-                  v-on:mouseenter="mouseEnterReply($event)"
-                  v-on:mouseleave="mouseleaveReply($event)"
-                  style="color: white"
-                >
-                  답글
-                </div>
-                <div
-                  id="repliesId"
-                  v-show="isShowReplies[index]"
-                  class="replyStyle"
-                >
-                  <div
-                    v-for="(reply, j) in comment.replies"
-                    :key="j"
-                    style="display: flex"
-                  >
-                    <h5>
-                      {{ `${reply.userId.channelName} : ${reply.text} ` }}
-                    </h5>
-                    <v-btn
-                      class="replyBtnStyle"
-                      @click="updateReplies(reply, index)"
-                      >답글 수정</v-btn
-                    >
-                    <v-btn class="replyBtnStyle" @click="deleteReplies(reply)"
-                      >답글 삭제</v-btn
-                    >
-                  </div>
-                </div>
-                <div class="newCommentStyle" v-show="isLoadText[index]">
-                  <v-textarea
-                    block
-                    v-model="newComment[index]"
-                    placeholder="수정값 or 댓글 입력"
-                  ></v-textarea>
-                  <v-btn @click="updateComment(comment, index)"
-                    >댓글 수정</v-btn
-                  >
-                  <v-btn @click="addReplies(comment, index)">답글 추가</v-btn>
-                </div>
+              <div
+                @click="showDescription()"
+                v-if="!isShowDescription"
+                class="descriptionStyle"
+              >
+                설명: {{ moreShowDescription }}
               </div>
+              <h5 v-else>설명: {{ watchVideo.description }}</h5>
             </div>
-            <form @submit.prevent="addComment">
-              <v-textarea
-                v-model="writtenComment.text"
-                placeholder="댓글 입력"
-              ></v-textarea>
-              <v-btn type="submit">댓글 추가</v-btn>
-            </form>
+            <div class="videoLikeStyle">
+              <h4>좋아요 {{ countVideoLike }}</h4>
+              <h4>싫어요 {{ countVideoDislike }}</h4>
+            </div>
+          </div>
+          <div class="likeBtnStyle">
+            <v-btn v-on:click="addFeeling($event)">Like</v-btn>
+            <v-btn v-on:click="addFeeling($event)">Dislike</v-btn>
           </div>
         </div>
-      </div>
+        <div class="commentDiv">
+          <h3>댓글 보기 {{ `(${countComment})` }}</h3>
+          <div v-for="(comment, index) in comments" :key="index">
+            <div class="commentStyle">
+              <h4>{{ comment.userId.channelName }} :</h4>
+              <div>{{ comment.text }}</div>
+              <v-btn class="btnStyle" @click="loadTextField(index)">✏️</v-btn>
+              <div></div>
+              <v-btn class="btnStyle" @click="deleteComment(comment)">🗑️</v-btn>
+              <div
+                @click="showReply(index)"
+                v-on:mouseenter="mouseEnterReply($event)"
+                v-on:mouseleave="mouseleaveReply($event)"
+                style="color: white"
+              >
+                답글
+              </div>
+              <div
+                id="repliesId"
+                v-show="isShowReplies[index]"
+                class="replyStyle"
+              >
+                <div
+                  v-for="(reply, j) in comment.replies"
+                  :key="j"
+                  style="display: flex"
+                >
+                  <h5>
+                    {{ `${reply.userId.channelName} : ${reply.text} ` }}
+                  </h5>
+                  <v-btn
+                    class="replyBtnStyle"
+                    @click="updateReplies(reply, index)"
+                    >답글 수정</v-btn
+                  >
+                  <v-btn class="replyBtnStyle" @click="deleteReplies(reply)"
+                    >답글 삭제</v-btn
+                  >
+                </div>
+              </div>
+              <div class="newCommentStyle" v-show="isLoadText[index]">
+                <v-textarea
+                  block
+                  v-model="newComment[index]"
+                  placeholder="수정값 or 댓글 입력"
+                ></v-textarea>
+                <v-btn @click="updateComment(comment, index)">댓글 수정</v-btn>
+                <v-btn @click="addReplies(comment, index)">답글 추가</v-btn>
+              </div>
+            </div>
+          </div>
+          <form @submit.prevent="addComment">
+            <v-textarea
+              v-model="writtenComment.text"
+              placeholder="댓글 입력"
+            ></v-textarea>
+            <v-btn type="submit">댓글 추가</v-btn>
+          </form>
+        </div>
+      </v-card>
     </div>
 
     <div class="listSection fill-height">
@@ -137,6 +139,7 @@ export default {
     newComment: [],
     isLoadText: [],
     isPlayVideo: false,
+    isShowDescription: false,
   }),
   components: {
     VideoListCard,
@@ -427,6 +430,15 @@ export default {
           });
       }
     },
+    async showDescription() {
+      if (
+        this.watchVideo.description &&
+        this.watchVideo.description.length > 5
+      ) {
+        this.isShowDescription = !this.isShowDescription;
+      }
+      console.log(this.isShowDescription);
+    },
   },
   mounted() {
     this.getVideos();
@@ -434,6 +446,14 @@ export default {
     this.getComments(this.$route.params.id);
   },
   computed: {
+    moreShowDescription() {
+      const description = this.watchVideo.description;
+      if (description) {
+        if (description.length > 5) {
+          return `${description.substr(0, 5)}...더보기`;
+        } else return description;
+      } else return "";
+    },
     countVideoLike() {
       return this.watchVideo.likes;
     },
@@ -448,18 +468,38 @@ export default {
 </script>
 <style>
 #Watch {
-  background-color: lightgray;
+  background-color: rgb(246, 247, 247);
   display: grid;
   grid-template-columns: 70% 30%;
+  padding: 2%;
 }
-
+.watchSection {
+  display: grid;
+  grid-gap: 20px;
+}
 .videoDiv {
-  background-color: rgb(228, 227, 227);
+  background-color: white;
   box-sizing: border-box;
   padding: 10px;
   width: 100%;
 }
-
+.videoInfoStyle {
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+.videoLikeStyle {
+  display: grid;
+  grid-template-columns: 15% 15%;
+}
+.likeBtnStyle {
+  display: grid;
+  grid-template-columns: 45% 45%;
+  grid-gap: 10%;
+}
+.descriptionStyle {
+  font-size: 13.28px;
+  font-weight: bold;
+}
 .listSection {
   align-items: center;
   box-sizing: border-box;
@@ -481,14 +521,14 @@ export default {
 }
 .commentDiv {
   border-radius: 5px;
-  border: 1px solid #000;
+  background-color: rgb(246, 247, 247);
   padding: 10px;
 }
 .commentStyle {
   display: grid;
   grid-template-columns: 20% 59% 10% 1% 10%;
   border-radius: 5px;
-  background-color: rgb(147, 151, 150);
+  background-color: rgb(206, 204, 204);
   padding: 10px;
   margin-bottom: 5px;
 }
@@ -498,7 +538,6 @@ export default {
 }
 .newCommentStyle {
   border-radius: 5px;
-  background-color: rgb(182, 178, 178);
   display: grid;
   grid-template-columns: 70% 15% 15%;
   grid-column: 1 / span 5;
@@ -515,17 +554,5 @@ export default {
 }
 .replyBtnStyle {
   width: 10px;
-}
-.videoInfoStyle {
-  display: grid;
-  grid-template-columns: 70% 30%;
-}
-.videoLikeStyle {
-  display: grid;
-  grid-template-columns: 10% 10%;
-}
-.likeBtnStyle {
-  display: grid;
-  grid-template-columns: 40% 10% 40%;
 }
 </style>
