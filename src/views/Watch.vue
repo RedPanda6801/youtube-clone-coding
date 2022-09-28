@@ -383,6 +383,7 @@ export default {
           });
       }
     },
+
     async addFeeling(event) {
       const text = event.target.innerText;
       console.log(text.toLowerCase());
@@ -551,6 +552,8 @@ export default {
 }
 .replyStyle {
   grid-column: 1 / span 2;
+  display: flex;
+  flex-direction: column-reverse;
 }
 .replyBtnStyle {
   width: 10px;
